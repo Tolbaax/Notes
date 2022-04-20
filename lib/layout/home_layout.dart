@@ -1,3 +1,4 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
@@ -5,6 +6,7 @@ import '../modules/archived_tasks_screen.dart';
 import '../modules/done_tasks_screen.dart';
 import '../modules/new_tasks_screen.dart';
 import '../shared/components/components.dart';
+import '../shared/components/constants.dart';
 
 class HomeLayout extends StatefulWidget {
   const HomeLayout({Key? key}) : super(key: key);
@@ -37,6 +39,7 @@ class _HomeLayoutState extends State<HomeLayout> {
   bool isBottomSheetShown = false;
   IconData pIcon = Icons.edit;
   late Database database;
+
   showTime() {
     showTimePicker(context: context, initialTime: TimeOfDay.now())
         .then((value) {
@@ -81,11 +84,15 @@ class _HomeLayoutState extends State<HomeLayout> {
                 time: timeController.text,
                 date: dateController.text,
               ).then((value) {
-                Navigator.pop(context);
-                isBottomSheetShown = false;
-                setState(() {
-                  pIcon = Icons.edit;
+                getDataFromDatabase(database).then((value) {
+                  Navigator.pop(context);
+                  setState(() {
+                    tasks = value;
+                    isBottomSheetShown = false;
+                    pIcon = Icons.edit;
+                  });
                 });
+
               });
             }
           } else {
@@ -201,7 +208,11 @@ class _HomeLayoutState extends State<HomeLayout> {
           ),
         ],
       ),
-      body: screens[currentIndex],
+      body: ConditionalBuilder(
+        builder: (context)=> screens[currentIndex],
+        condition: tasks.length > 0,
+        fallback: (context)=> const Center(child: CircularProgressIndicator(),),
+      ),
     );
   }
 
@@ -215,7 +226,13 @@ class _HomeLayoutState extends State<HomeLayout> {
       );
       },
       onOpen: (database) {
-        print('Database opened');
+      getDataFromDatabase(database).then((value) {
+        setState(() {
+          tasks = value;
+        });
+      });
+
+      print('Database opened');
       }
     );
   }
@@ -225,9 +242,14 @@ class _HomeLayoutState extends State<HomeLayout> {
     return database.transaction((txn) async{
       await txn.rawInsert(
           'INSERT INTO tasks(title,date,time,status)  VALUES("$title","$date","$time","new")'
-      );
+      ).then((value) {
+        print('$value inserted successfully');
+      });
       return null;
     });
   }
 
+  Future<List<Map>> getDataFromDatabase(database) async{
+    return await database.rawQuery('SELECT * FROM tasks');
+  }
 }
