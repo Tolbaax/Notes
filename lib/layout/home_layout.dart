@@ -173,5 +173,3 @@ class HomeLayout extends StatelessWidget {
     );
   }
 }
-
-//1
