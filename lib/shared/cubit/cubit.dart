@@ -33,6 +33,9 @@ class AppCubit extends Cubit<AppStates> {
 
   late Database database;
   List<Map> tasks = [];
+  List<Map> newTasks = [];
+  List<Map> doneTasks = [];
+  List<Map> archivedTasks = [];
   bool isBottomSheetShown = false;
   IconData pIcon = Icons.edit;
 
@@ -50,10 +53,7 @@ class AppCubit extends Cubit<AppStates> {
           );
         },
         onOpen: (database) {
-          getDataFromDatabase(database).then((value) {
-            tasks = value;
-            emit(AppGetDataBaseState());
-          });
+          getDataFromDatabase(database);
           print('Database opened');
         }
     ).then((value){
@@ -70,25 +70,25 @@ class AppCubit extends Cubit<AppStates> {
       ).then((value) {
         print('$value inserted successfully');
         emit(AppInsertToDataBaseState());
-        getDataFromDatabase(database).then((value) {
-          tasks = value;
-          emit(AppGetDataBaseState());
-        });
-
+        getDataFromDatabase(database);
       });
       return null;
     });
   }
 
-  Future<List<Map>> getDataFromDatabase(database) async{
+  void getDataFromDatabase(database) {
     emit(AppGetDataBaseLoadingState());
-    return await database.rawQuery('SELECT * FROM tasks');
+    database.rawQuery('SELECT * FROM tasks').then((value) {
+      tasks = value;
+
+      emit(AppGetDataBaseState());
+    });
   }
 
   void updateDataBase({required String status,required int id}) {
     // Update some record
     database.rawUpdate(
-        'UPDATE tasks SET status = ?, WHERE id = ?',
+        'UPDATE tasks SET status = ? WHERE id = ?',
         [status, id]
     ).then((value) {
           emit(AppUpdateDataBaseState());
