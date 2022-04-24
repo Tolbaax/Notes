@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:task_app/shared/cubit/states.dart';
-
 import '../../modules/archived_tasks_screen.dart';
 import '../../modules/done_tasks_screen.dart';
 import '../../modules/new_tasks_screen.dart';
 
 class AppCubit extends Cubit<AppStates> {
-  AppCubit(): super(AppInitialState());
+  AppCubit() : super(AppInitialState());
 
-  static AppCubit get(context)=> BlocProvider.of(context);
+  static AppCubit get(context) => BlocProvider.of(context);
 
   int currentIndex = 0;
 
@@ -32,31 +31,27 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   late Database database;
-  List<Map> tasks = [];
   List<Map> newTasks = [];
   List<Map> doneTasks = [];
-  List<Map> archivedTasks = [];
+  List<Map> archiveTasks = [];
   bool isBottomSheetShown = false;
   IconData pIcon = Icons.edit;
 
-  void changeBottomSheetState({required bool isShow,required IconData icon}){
+  void changeBottomSheetState({required bool isShow, required IconData icon}) {
     isBottomSheetShown = isShow;
     pIcon = icon;
   }
 
   void createDatabase() {
     // open the database
-    openDatabase('todo.db',version: 1,
-        onCreate: (Database database, int version) async{
-          await database.execute(
-              'CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,date TEXT,time TEXT,status TEXT)'
-          );
-        },
-        onOpen: (database) {
-          getDataFromDatabase(database);
-          print('Database opened');
-        }
-    ).then((value){
+    openDatabase('todo.db', version: 1,
+        onCreate: (Database database, int version) async {
+      await database.execute(
+          'CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,date TEXT,time TEXT,status TEXT)');
+    }, onOpen: (database) {
+      getDataFromDatabase(database);
+      print('Database opened');
+    }).then((value) {
       database = value;
       emit(AppCreateDataBaseState());
     });
@@ -64,10 +59,11 @@ class AppCubit extends Cubit<AppStates> {
 
   insertToDatabase({required String title, required String time, required String date}) {
     // Insert some records in a transaction
-    return database.transaction((txn) async{
-      await txn.rawInsert(
-          'INSERT INTO tasks(title,date,time,status)  VALUES("$title","$date","$time","new")'
-      ).then((value) {
+    return database.transaction((txn) async {
+      await txn
+          .rawInsert(
+              'INSERT INTO tasks(title,date,time,status)  VALUES("$title","$date","$time","new")')
+          .then((value) {
         print('$value inserted successfully');
         emit(AppInsertToDataBaseState());
         getDataFromDatabase(database);
@@ -77,21 +73,42 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   void getDataFromDatabase(database) {
+    newTasks = [];
+    doneTasks = [];
+    archiveTasks = [];
     emit(AppGetDataBaseLoadingState());
+    // Get the records
     database.rawQuery('SELECT * FROM tasks').then((value) {
-      tasks = value;
-
+      value.forEach((element) {
+        if (element['status'] == 'new') {
+          newTasks.add(element);
+        }
+        else if (element['status'] == 'done') {
+          doneTasks.add(element);
+        }
+        else {
+          archiveTasks.add(element);
+        }
+      });
       emit(AppGetDataBaseState());
     });
   }
 
-  void updateDataBase({required String status,required int id}) {
+  void updateDataBase({required String status, required int id}) {
     // Update some record
     database.rawUpdate(
-        'UPDATE tasks SET status = ? WHERE id = ?',
-        [status, id]
-    ).then((value) {
-          emit(AppUpdateDataBaseState());
+        'UPDATE tasks SET status = ? WHERE id = ?', [status, id]).then((value) {
+      getDataFromDatabase(database);
+      emit(AppUpdateDataBaseState());
+    });
+  }
+
+  void deleteDataBase({required int id}) {
+    // Delete a record
+    database.rawDelete(
+        'DELETE FROM  tasks WHERE id = ?', [id]).then((value) {
+      getDataFromDatabase(database);
+      emit(AppDeleteDataBaseState());
     });
   }
 }

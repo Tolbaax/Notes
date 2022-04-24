@@ -65,7 +65,6 @@ class HomeLayout extends StatelessWidget {
                                     if (value!.isEmpty) {
                                       return 'Please enter title';
                                     }
-                                    return null;
                                   },
                                   label: 'Task Title',
                                   type: TextInputType.text,
@@ -81,7 +80,6 @@ class HomeLayout extends StatelessWidget {
                                     if (value!.isEmpty) {
                                       return 'Please enter time';
                                     }
-                                    return null;
                                   },
                                   label: 'Task Time',
                                   type: TextInputType.datetime,
@@ -103,7 +101,6 @@ class HomeLayout extends StatelessWidget {
                                     if (value!.isEmpty) {
                                       return 'Please enter date';
                                     }
-                                    return null;
                                   },
                                   label: 'Task date',
                                   type: TextInputType.datetime,
