@@ -99,7 +99,7 @@ Widget buildTaskItem(Map model, BuildContext context) => Dismissible(
     alignment: Alignment.centerLeft,
     padding: const EdgeInsets.symmetric(horizontal: 20.0),
     color: Colors.red,
-    child: const Icon(Icons.delete_forever,size: 30,color: Colors.white,),
+    child: const Icon(Icons.delete_forever,size: 30.0,color: Colors.white,),
   ),
   direction: DismissDirection.startToEnd,
     );
