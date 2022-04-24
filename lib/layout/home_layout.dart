@@ -125,6 +125,7 @@ class HomeLayout extends StatelessWidget {
                       .closed
                       .then((value) {
                     cubit.changeBottomSheetState(isShow: false, icon: Icons.edit);
+                    formKey.currentState?.reset();
                   });
                   cubit.changeBottomSheetState(isShow: true, icon: Icons.add);
                 }
