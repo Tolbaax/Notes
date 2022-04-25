@@ -43,9 +43,8 @@ class HomeLayout extends StatelessWidget {
                   if (formKey.currentState!.validate()) {
                     cubit.insertToDatabase(
                         title: titleController.text,
-                        time: timeController.text,
-                        date: dateController.text
-                    );
+                        date: dateController.text,
+                        time: timeController.text);
                   }
                 } else {
                   scaffoldKey.currentState

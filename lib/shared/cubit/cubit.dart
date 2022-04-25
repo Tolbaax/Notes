@@ -9,49 +9,61 @@ import '../../modules/new_tasks_screen.dart';
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitialState());
 
+  // to more easily when use this cubit in many places
   static AppCubit get(context) => BlocProvider.of(context);
 
+  List<String> titles = ['New Tasks', 'Done Tasks', 'Archived Tasks',];
+  List<Widget> screens = [const NewTasksScreen(), const DoneTasksScreen(), const ArchivedTasksScreen(),];
   int currentIndex = 0;
-
-  List<String> titles = [
-    'New Tasks',
-    'Done Tasks',
-    'Archived Tasks',
-  ];
-
-  List<Widget> screens = [
-    const NewTasksScreen(),
-    const DoneTasksScreen(),
-    const ArchivedTasksScreen(),
-  ];
-
-  void changeIndex(int index) {
-    currentIndex = index;
-    emit(AppChangeBottomNavBarState());
-  }
-
-  late Database database;
   List<Map> newTasks = [];
   List<Map> doneTasks = [];
   List<Map> archiveTasks = [];
   bool isBottomSheetShown = false;
   IconData pIcon = Icons.edit;
 
+  void changeIndex(int index) {
+    currentIndex = index;
+    emit(AppChangeBottomNavBarState());
+  }
+
   void changeBottomSheetState({required bool isShow, required IconData icon}) {
     isBottomSheetShown = isShow;
     pIcon = icon;
   }
 
-  void createDatabase() {
+  late Database database;
+
+  // 1. create database
+  // 2. create tables
+  // 3. Open database
+  // 4. insert db
+  // 5. get from db
+  // 6. update in db
+  // 7. delete from db
+
+  void createDatabase()  {
     // open the database
-    openDatabase('todo.db', version: 1,
-        onCreate: (Database database, int version) async {
+    openDatabase('task.db',version: 1,
+      onCreate: (Database database,int version) async{
       await database.execute(
-          'CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,date TEXT,time TEXT,status TEXT)');
-    }, onOpen: (database) {
-      getDataFromDatabase(database);
-      print('Database opened');
-    }).then((value) {
+
+        // id INTEGER
+        // title STRING
+        // date STRING
+        // time STRING
+        // status STRING
+        // STRING => TEXT
+        //[status TEXT] => (column name, data type)
+
+        'CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,date TEXT,time TEXT,status TEXT )'
+      );
+      print('database created');
+      },
+      onOpen: (database) {
+        getDataFromDatabase(database);
+        print('database opened');
+      }
+    ).then((value) {
       database = value;
       emit(AppCreateDataBaseState());
     });
@@ -62,7 +74,7 @@ class AppCubit extends Cubit<AppStates> {
     return database.transaction((txn) async {
       await txn
           .rawInsert(
-              'INSERT INTO tasks(title,date,time,status)  VALUES("$title","$date","$time","new")')
+          'INSERT INTO tasks(title,date,time,status)  VALUES("$title","$date","$time","new")')
           .then((value) {
         print('$value inserted successfully');
         emit(AppInsertToDataBaseState());
@@ -111,4 +123,5 @@ class AppCubit extends Cubit<AppStates> {
       emit(AppDeleteDataBaseState());
     });
   }
+
 }
