@@ -44,25 +44,25 @@ class AppCubit extends Cubit<AppStates> {
   void createDatabase()  {
     // open the database
     openDatabase('task.db',version: 1,
-      onCreate: (Database database,int version) async{
-      await database.execute(
+        onCreate: (Database database,int version) async{
+          await database.execute(
 
-        // id INTEGER
-        // title STRING
-        // date STRING
-        // time STRING
-        // status STRING
-        // STRING => TEXT
-        //[status TEXT] => (column name, data type)
+            // id INTEGER
+            // title STRING
+            // date STRING
+            // time STRING
+            // status STRING
+            // STRING => TEXT
+            //[status TEXT] => (column name, data type)
 
-        'CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,date TEXT,time TEXT,status TEXT )'
-      );
-      print('database created');
-      },
-      onOpen: (database) {
-        getDataFromDatabase(database);
-        print('database opened');
-      }
+              'CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,date TEXT,time TEXT,status TEXT )'
+          );
+          print('database created');
+        },
+        onOpen: (database) {
+          getDataFromDatabase(database);
+          print('database opened');
+        }
     ).then((value) {
       database = value;
       emit(AppCreateDataBaseState());
@@ -123,5 +123,7 @@ class AppCubit extends Cubit<AppStates> {
       emit(AppDeleteDataBaseState());
     });
   }
+
+
 
 }

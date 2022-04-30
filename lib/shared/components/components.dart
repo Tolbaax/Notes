@@ -25,7 +25,7 @@ Widget defaultFormField({
         labelText: label,
         prefixIcon: Icon(
           prefix,
-          color: Colors.blue,
+          color: Colors.teal,
         ),
         suffixIcon: IconButton(
           icon: Icon(suffix),
@@ -39,59 +39,59 @@ Widget buildTaskItem(Map model, BuildContext context) => Dismissible(
 
   key: Key(model['id'].toString()),
   child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 40.0,
-              child: Text('${model['time']}'),
-            ),
-            const SizedBox(
-              width: 20.0,
-            ),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '${model['title']}',
-                    style: const TextStyle(
-                        fontSize: 20.0, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  Text(
-                    '${model['date']}',
-                    style: TextStyle(color: Colors.grey.shade600),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              width: 20.0,
-            ),
-            IconButton(
-                onPressed: () {
-                  AppCubit.get(context)
-                      .updateDataBase(status: 'done', id: model['id']);
-                },
-                icon: const Icon(
-                  Icons.check_box,
-                  color: Colors.green,
-                )),
-            IconButton(
-                onPressed: () {
-                  AppCubit.get(context)
-                      .updateDataBase(status: 'archive', id: model['id']);
-                },
-                icon: Icon(
-                  Icons.archive,
-                  color: Colors.grey.shade800,
-                )),
-          ],
+    padding: const EdgeInsets.all(20.0),
+    child: Row(
+      children: [
+        CircleAvatar(
+          backgroundColor: Colors.teal.shade400,
+          radius: 40.0,
+          child: Text('${model['time']}',
+            style: const TextStyle(fontSize:17,color: Colors.white,fontWeight: FontWeight.w500),),
         ),
-      ),
+        const SizedBox(
+          width: 20.0,
+        ),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${model['title']}',
+                style: const TextStyle(
+                    fontSize: 20.0, fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(
+                height: 10.0,
+              ),
+              Text(
+                '${model['date']}',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          width: 20.0,
+        ),
+        IconButton(
+            onPressed: () {
+              AppCubit.get(context).updateDataBase(status: 'done', id: model['id']);
+            },
+            icon: const Icon(
+              Icons.check_box,
+              color: Colors.teal,
+            )),
+        IconButton(
+            onPressed: () {
+              AppCubit.get(context).updateDataBase(status: 'archive', id: model['id']);
+            },
+            icon: Icon(
+              Icons.archive,
+              color: Colors.grey.shade800,
+            )),
+      ],
+    ),
+  ),
   onDismissed: (direction) {
     AppCubit.get(context).deleteDataBase(id: model['id']);
   },
@@ -102,7 +102,7 @@ Widget buildTaskItem(Map model, BuildContext context) => Dismissible(
     child: const Icon(Icons.delete_forever,size: 30.0,color: Colors.white,),
   ),
   direction: DismissDirection.startToEnd,
-    );
+);
 
 Widget tasksBuilder(List<Map> tasks)=> ConditionalBuilder(
   condition: tasks.isNotEmpty,

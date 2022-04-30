@@ -1,4 +1,4 @@
-abstract class AppStates {}
+ class AppStates {}
 
 class AppInitialState extends AppStates {}
 

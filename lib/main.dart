@@ -8,10 +8,10 @@ void main() {
   BlocOverrides.runZoned(
         () {
           AppCubit();
+          runApp(const MyApp());
     },
     blocObserver: MyBlocObserver(),
   );
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
