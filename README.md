@@ -1,6 +1,6 @@
 # Notes App
 
-A notes-app using sqflite $ cubit.
+### A notes-app using sqflite & cubit.
 
 ## Getting Started
 
