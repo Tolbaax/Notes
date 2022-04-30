@@ -1,6 +1,6 @@
 # Notes App
 
-A new Flutter project.
+A notes-app using sqflite $ cubit.
 
 ## Getting Started
 
